@@ -1,9 +1,16 @@
 # Stage 1: Build JAR
 FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
 WORKDIR /app
-COPY backend/pom.xml ./pom.xml
-COPY backend/src ./src
-RUN mvn clean package -DskipTests
+
+# Copy files
+COPY . .
+
+# Handle both root build context and backend build context
+RUN if [ -d "backend" ]; then \
+      cp backend/pom.xml ./pom.xml && \
+      cp -r backend/src ./src; \
+    fi && \
+    mvn clean package -DskipTests
 
 # Stage 2: Run application
 FROM eclipse-temurin:17-jre-alpine
