@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏸 Quản Lý Thu Chi Cầu Lông</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header-content">
+        <div class="header-left">
+          <span class="logo">🏸</span>
+          <div>
+            <h1>Quản Lý Thu Chi</h1>
+            <p class="subtitle">Đội Cầu Lông</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="btn btn-outline" id="btnManageMembers">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            Thành Viên
+          </button>
+          <button class="btn btn-primary" id="btnAddSession">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Thêm Buổi
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-icon blue">🏟️</div>
+        <div><div class="stat-value" id="totalSessions">0</div><div class="stat-label">Buổi Chơi</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow">💰</div>
+        <div><div class="stat-value" id="totalExpense">0đ</div><div class="stat-label">Tổng Chi Phí</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div><div class="stat-value" id="totalCollected">0đ</div><div class="stat-label">Đã Thu</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red">⏳</div>
+        <div><div class="stat-value" id="totalDebt">0đ</div><div class="stat-label">Còn Nợ</div></div>
+      </div>
+    </div>
+    <main class="main">
+      <div class="sessions-panel">
+        <div class="panel-header">
+          <h2>📋 Lịch Sử Buổi Chơi</h2>
+          <div class="filter-bar">
+            <input type="month" id="filterMonth" class="input-month" />
+            <button class="btn btn-ghost" id="btnClearFilter">Tất cả</button>
+          </div>
+        </div>
+        <div class="sessions-list" id="sessionsList">
+          <div class="empty-state">
+            <div class="empty-icon">🏸</div>
+            <p>Chưa có buổi chơi nào</p>
+            <p class="empty-sub">Nhấn "Thêm Buổi" để bắt đầu</p>
+          </div>
+        </div>
+      </div>
+      <div class="members-panel">
+        <div class="panel-header">
+          <h2>👥 Số Dư Thành Viên</h2>
+          <button class="btn btn-ghost btn-sm" id="btnResetAll">🔄 Reset</button>
+        </div>
+        <div class="members-list" id="membersList"></div>
+        <div class="fund-section">
+          <div class="fund-header">
+            <span>🏦 Quỹ Nhóm</span>
+            <span class="fund-amount" id="fundAmount">0đ</span>
+          </div>
+          <div class="fund-actions">
+            <button class="btn btn-sm btn-outline" id="btnAddFund">+ Nạp Quỹ</button>
+            <button class="btn btn-sm btn-outline" id="btnWithdrawFund">- Rút Quỹ</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="modalSession">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalSessionTitle">➕ Thêm Buổi Chơi</h3>
+        <button class="modal-close" data-close="modalSession">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>📅 Ngày Chơi</label>
+            <input type="date" id="sessionDate" class="input" />
+          </div>
+          <div class="form-group">
+            <label>⏰ Giờ</label>
+            <input type="time" id="sessionTime" class="input" value="07:00" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>🏟️ Tiền Sân (đ)</label>
+          <input type="number" id="courtFee" class="input" placeholder="VD: 200000" min="0" />
+        </div>
+        <div class="form-group">
+          <label>🏸 Tiền Cầu (đ)</label>
+          <input type="number" id="shuttleFee" class="input" placeholder="VD: 60000" min="0" />
+        </div>
+        <div class="form-group">
+          <label>👥 Người Tham Gia</label>
+          <div class="member-checkboxes" id="attendeesCheck"></div>
+          <div class="select-all-row">
+            <button class="btn btn-ghost btn-sm" id="btnSelectAll">Chọn tất cả</button>
+            <button class="btn btn-ghost btn-sm" id="btnDeselectAll">Bỏ chọn tất</button>
+            <span class="attendee-count" id="attendeeCount">0 người</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>📝 Ghi Chú</label>
+          <input type="text" id="sessionNote" class="input" placeholder="VD: Sân A, Nhà thi đấu X..." />
+        </div>
+        <div class="cost-preview" id="costPreview">
+          <div class="cost-row"><span>Tổng chi phí:</span><strong id="previewTotal">0đ</strong></div>
+          <div class="cost-row"><span>Mỗi người:</span><strong id="previewPerPerson" class="highlight">0đ</strong></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-close="modalSession">Hủy</button>
+        <button class="btn btn-primary" id="btnSaveSession">Lưu Buổi</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalMembers">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3>👥 Quản Lý Thành Viên</h3>
+        <button class="modal-close" data-close="modalMembers">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="member-input-row">
+          <input type="text" id="newMemberName" class="input" placeholder="Tên thành viên..." maxlength="20" />
+          <button class="btn btn-primary" id="btnAddMember">Thêm</button>
+        </div>
+        <div class="members-manage-list" id="membersManageList"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-close="modalMembers">Xong</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalDetail">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="detailTitle">📋 Chi Tiết Buổi</h3>
+        <button class="modal-close" data-close="modalDetail">✕</button>
+      </div>
+      <div class="modal-body" id="detailBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="btnDeleteSession">🗑 Xóa Buổi</button>
+        <button class="btn btn-outline" id="btnEditSession">✏️ Sửa</button>
+        <button class="btn btn-ghost" data-close="modalDetail">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalFund">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3 id="fundModalTitle">🏦 Nạp Quỹ</h3>
+        <button class="modal-close" data-close="modalFund">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Số tiền (đ)</label>
+          <input type="number" id="fundAmount2" class="input" placeholder="VD: 500000" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Ghi chú</label>
+          <input type="text" id="fundNote" class="input" placeholder="Mô tả..." />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-close="modalFund">Hủy</button>
+        <button class="btn btn-primary" id="btnConfirmFund">Xác Nhận</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

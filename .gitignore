@@ -1,0 +1,24 @@
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+*.log
+
+# Local MySQL data
+mysql-data/
+
+# Java / Maven
+target/
+*.jar
+*.war
+
+# Node / Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Scratch / Temp
+scratch/
